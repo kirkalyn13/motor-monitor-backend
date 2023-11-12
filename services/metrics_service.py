@@ -1,7 +1,7 @@
 import repository.metrics_repository as metrics_repository
 
-def get_latest_metrics():
-    result = metrics_repository.get_latest_metrics()[0]
+def get_latest_metrics(id):
+    result = metrics_repository.get_latest_metrics(id)[0]
     latest_metrics = {
         "timestamp": result[1],
         "unitID": result[2],
