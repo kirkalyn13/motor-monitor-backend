@@ -1,5 +1,5 @@
 from db.cursor import query
-from utilities.timezone import timestamp_format
+from utilities.time import timestamp_format
 
 def get_latest_metrics(id):
     query_string = f"""
