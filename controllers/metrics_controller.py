@@ -13,3 +13,15 @@ def get_voltage_trend(id):
     if request.method == "GET":
         result = metrics_service.get_voltage_trend(id)
         return jsonify(result), 200
+    
+@app.route("/api/v1/metrics/current/<id>", methods=["GET"])
+def get_current_trend(id):
+    if request.method == "GET":
+        result = metrics_service.get_current_trend(id)
+        return jsonify(result), 200
+    
+@app.route("/api/v1/metrics/temperature/<id>", methods=["GET"])
+def get_temperature_trend(id):
+    if request.method == "GET":
+        result = metrics_service.get_temperature_trend(id)
+        return jsonify(result), 200

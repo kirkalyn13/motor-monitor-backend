@@ -36,3 +36,37 @@ def get_voltage_trend(id):
         voltage_trend[2]["data"].append(data[2])
 
     return voltage_trend
+
+def get_current_trend(id):
+    current_trend = [{
+        "name": "Line 1 Current",
+        "data": []
+    },
+    {
+        "name": 'Line 2 Current',
+        "data": []
+    },
+    {
+        "name": "Line 3 Current",
+        "data": []
+    }]
+
+    result = metrics_repository.get_current_trend(id)
+    for data in result:
+        current_trend[0]["data"].append(data[0])
+        current_trend[1]["data"].append(data[1])
+        current_trend[2]["data"].append(data[2])
+
+    return current_trend
+
+def get_temperature_trend(id):
+    temperature_trend = [{
+        "name": "Temperature",
+        "data": []
+    }]
+
+    result = metrics_repository.get_current_trend(id)
+    for data in result:
+        temperature_trend[0]["data"].append(data[0])
+
+    return temperature_trend
