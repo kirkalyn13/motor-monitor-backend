@@ -1,28 +1,39 @@
-import repository.metrics_repository as metrics_repository
+import repositories.metrics_repository as metrics_repository
 from calculators.status import get_status
+from utilities.time import convert_timestamp
 
 def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
     result = metrics_repository.get_latest_metrics(id)[0]
     latest_metrics = {
-        "timestamp": result[1],
-        "unitID": result[2],
-        "metrics": {
-            "line1Voltage": result[3],
-            "line2Voltage": result[4],
-            "line3Voltage": result[5],
-            "line1Current": result[6],
-            "line2Current": result[7],
-            "line3Current": result[8],
-            "temperature": result[9],
+        "timestamp": result[0],
+        "unitID": result[1],
+        "line1Voltage": {
+            "value": result[2],
+            "status": get_status(result[2], rated_voltage)
         },
-        "status" : {
-            "line1Voltage": get_status(result[3], rated_voltage),
-            "line2Voltage": get_status(result[4], rated_voltage),
-            "line3Voltage": get_status(result[5], rated_voltage),
-            "line1Current": get_status(result[6], rated_current),
-            "line2Current": get_status(result[7], rated_current),
-            "line3Current": get_status(result[8], rated_current),
-            "temperature": get_status(result[9], max_temperature),
+        "line2Voltage": {
+            "value": result[3],
+            "status": get_status(result[3], rated_voltage)
+        },
+        "line3Voltage": {
+            "value": result[4],
+            "status": get_status(result[4], rated_voltage)
+        },
+        "line1Current": {
+            "value": result[5],
+            "status": get_status(result[5], rated_current)
+        },
+        "line2Current": {
+            "value": result[6],
+            "status": get_status(result[6], rated_current)
+        },
+        "line3Current": {
+            "value": result[7],
+            "status": get_status(result[7], rated_current)
+        },
+        "temperature": {
+            "value": result[8],
+            "status": get_status(result[8], max_temperature)
         }
     }
     return latest_metrics
@@ -40,14 +51,19 @@ def get_voltage_trend(id):
         "name": "Line 3 Voltage",
         "data": []
     }]
+    timestamps = []
 
     result = metrics_repository.get_voltage_trend(id)
     for data in result:
-        voltage_trend[0]["data"].append(data[0])
-        voltage_trend[1]["data"].append(data[1])
-        voltage_trend[2]["data"].append(data[2])
+        timestamps.append(convert_timestamp(data[0]))
+        voltage_trend[0]["data"].append(data[1])
+        voltage_trend[1]["data"].append(data[2])
+        voltage_trend[2]["data"].append(data[3])
 
-    return voltage_trend
+    return {
+        "trend": voltage_trend,
+        "timestamps": timestamps
+    }
 
 def get_current_trend(id):
     current_trend = [{
@@ -62,23 +78,33 @@ def get_current_trend(id):
         "name": "Line 3 Current",
         "data": []
     }]
+    timestamps = []
 
     result = metrics_repository.get_current_trend(id)
     for data in result:
-        current_trend[0]["data"].append(data[0])
-        current_trend[1]["data"].append(data[1])
-        current_trend[2]["data"].append(data[2])
+        timestamps.append(convert_timestamp(data[0]))
+        current_trend[0]["data"].append(data[1])
+        current_trend[1]["data"].append(data[2])
+        current_trend[2]["data"].append(data[3])
 
-    return current_trend
+    return {
+        "trend": current_trend,
+        "timestamps": timestamps
+    }
 
 def get_temperature_trend(id):
     temperature_trend = [{
         "name": "Temperature",
         "data": []
     }]
+    timestamps = []
 
-    result = metrics_repository.get_current_trend(id)
+    result = metrics_repository.get_temperature_trend(id)
     for data in result:
-        temperature_trend[0]["data"].append(data[0])
+        timestamps.append(convert_timestamp(data[0]))
+        temperature_trend[0]["data"].append(data[1])
 
-    return temperature_trend
+    return {
+        "trend": temperature_trend,
+        "timestamps": timestamps
+    }
