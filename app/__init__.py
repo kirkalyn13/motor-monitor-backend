@@ -1,7 +1,8 @@
 from flask import Flask
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app) 
 
 # Import controllers here: 
 from controllers import metrics_controller
-from controllers import voltage_controller
