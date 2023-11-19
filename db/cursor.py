@@ -13,18 +13,16 @@ db_user = os.environ.get("DB_USER")
 db_password = os.environ.get("DB_PASSWORD")
 db_port = os.environ.get("DB_PORT")
 
-# Establish a connection to the PostgreSQL database
-connection = psycopg2.connect(
-    host=db_host,
-    database=db_name,
-    user=db_user,
-    password=db_password,
-    port=db_port,
-)
-
 def query(query_string):
-    cursor = connection.cursor()
     try:
+        connection = psycopg2.connect(
+            host=db_host,
+            database=db_name,
+            user=db_user,
+            password=db_password,
+            port=db_port,
+        )
+        cursor = connection.cursor()
         cursor.execute(query_string)
         connection.commit()
         return cursor.fetchall()
@@ -33,6 +31,7 @@ def query(query_string):
         print(f"Error Occurred: {e}")
     finally:
         cursor.close()
+        connection.close()
 
 def test_db_connection():
     try:
