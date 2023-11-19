@@ -55,10 +55,10 @@ def get_voltage_trend(id):
 
     result = metrics_repository.get_voltage_trend(id)
     for data in result:
-        timestamps.append(convert_timestamp(data[0]))
-        voltage_trend[0]["data"].append(data[1])
-        voltage_trend[1]["data"].append(data[2])
-        voltage_trend[2]["data"].append(data[3])
+        timestamps.insert(0, convert_timestamp(data[0]))
+        voltage_trend[0]["data"].insert(0, data[1])
+        voltage_trend[1]["data"].insert(0, data[2])
+        voltage_trend[2]["data"].insert(0, data[3])
 
     return {
         "trend": voltage_trend,
@@ -82,10 +82,10 @@ def get_current_trend(id):
 
     result = metrics_repository.get_current_trend(id)
     for data in result:
-        timestamps.append(convert_timestamp(data[0]))
-        current_trend[0]["data"].append(data[1])
-        current_trend[1]["data"].append(data[2])
-        current_trend[2]["data"].append(data[3])
+        timestamps.insert(0, convert_timestamp(data[0]))
+        current_trend[0]["data"].insert(0, data[1])
+        current_trend[1]["data"].insert(0, data[2])
+        current_trend[2]["data"].insert(0, data[3])
 
     return {
         "trend": current_trend,
@@ -101,8 +101,8 @@ def get_temperature_trend(id):
 
     result = metrics_repository.get_temperature_trend(id)
     for data in result:
-        timestamps.append(convert_timestamp(data[0]))
-        temperature_trend[0]["data"].append(data[1])
+        timestamps.insert(0, convert_timestamp(data[0]))
+        temperature_trend[0]["data"].insert(0, data[1])
 
     return {
         "trend": temperature_trend,
