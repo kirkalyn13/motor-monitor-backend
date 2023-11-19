@@ -40,4 +40,16 @@ def get_temperature_trend(id):
             result = metrics_service.get_temperature_trend(id)
             return jsonify(result), 200
         except Exception as e:
-                return jsonify(error(str(e))), 500
+            return jsonify(error(str(e))), 500
+        
+@app.route("/api/v1/metrics/summary/<id>", methods=["GET"])
+def get_metrics_summary(id):
+    if request.method == "GET":
+        try:
+            rated_voltage = float(request.args.get('ratedVoltage'))
+            rated_current = float(request.args.get('ratedCurrent'))
+            max_temperature = float(request.args.get('maxTemperature'))
+            result = metrics_service.get_metrics_summary(id, rated_voltage, rated_current, max_temperature)
+            return jsonify(result), 200
+        except Exception as e:
+            return jsonify(error(str(e))), 500

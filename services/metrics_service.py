@@ -108,3 +108,31 @@ def get_temperature_trend(id):
         "trend": temperature_trend,
         "timestamps": timestamps
     }
+
+def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
+    result = metrics_repository.get_latest_metrics(id)[0]
+    metrics_status = [
+            get_status(result[2], rated_voltage),
+            get_status(result[3], rated_voltage),
+            get_status(result[4], rated_voltage),
+            get_status(result[5], rated_current),
+            get_status(result[6], rated_current),
+            get_status(result[7], rated_current),
+            get_status(result[8], max_temperature)
+    ]
+
+    normal_count = 0
+    warning_count = 0
+    critical_count = 0
+    
+    for status in metrics_status:
+        if status == "normal":
+            normal_count += 1
+        elif status == "warning":
+            warning_count += 1
+        elif status == "critical":
+            critical_count += 1
+
+    return {
+        "summary": [ normal_count, warning_count, critical_count ]
+    }
