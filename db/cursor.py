@@ -23,8 +23,8 @@ connection = psycopg2.connect(
 )
 
 def query(query_string):
+    cursor = connection.cursor()
     try:
-        cursor = connection.cursor()
         cursor.execute(query_string)
         connection.commit()
         return cursor.fetchall()
