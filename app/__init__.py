@@ -16,3 +16,4 @@ CORS(app, resources={r"/api/*": cors_config})
 
 # Import controllers here: 
 from controllers import metrics_controller
+from controllers import health_controller

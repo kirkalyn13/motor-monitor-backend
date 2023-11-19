@@ -1,6 +1,7 @@
 import psycopg2
 import os
 from dotenv import load_dotenv
+from psycopg2 import OperationalError
 
 # Load environment variables from the .env file
 load_dotenv()
@@ -32,6 +33,23 @@ def query(query_string):
         print(f"Error Occurred: {e}")
     finally:
         cursor.close()
+
+def test_db_connection():
+    try:
+        connection = psycopg2.connect(
+            host=db_host,
+            database=db_name,
+            user=db_user,
+            password=db_password,
+            port=db_port,
+        )
+        print("Connection established successfully.")
+        return True
+    except OperationalError as e:
+        print(f"Unable to connect to the database. Error: {e}")
+        return False
+    finally:
+        connection.close()
 
 
 
