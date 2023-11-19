@@ -55,10 +55,10 @@ def get_voltage_trend(id):
 
     result = metrics_repository.get_voltage_trend(id)
     for data in result:
-        timestamps.append(convert_timestamp(data[0]))
-        voltage_trend[0]["data"].append(data[1])
-        voltage_trend[1]["data"].append(data[2])
-        voltage_trend[2]["data"].append(data[3])
+        timestamps.insert(0, convert_timestamp(data[0]))
+        voltage_trend[0]["data"].insert(0, data[1])
+        voltage_trend[1]["data"].insert(0, data[2])
+        voltage_trend[2]["data"].insert(0, data[3])
 
     return {
         "trend": voltage_trend,
@@ -82,10 +82,10 @@ def get_current_trend(id):
 
     result = metrics_repository.get_current_trend(id)
     for data in result:
-        timestamps.append(convert_timestamp(data[0]))
-        current_trend[0]["data"].append(data[1])
-        current_trend[1]["data"].append(data[2])
-        current_trend[2]["data"].append(data[3])
+        timestamps.insert(0, convert_timestamp(data[0]))
+        current_trend[0]["data"].insert(0, data[1])
+        current_trend[1]["data"].insert(0, data[2])
+        current_trend[2]["data"].insert(0, data[3])
 
     return {
         "trend": current_trend,
@@ -101,10 +101,38 @@ def get_temperature_trend(id):
 
     result = metrics_repository.get_temperature_trend(id)
     for data in result:
-        timestamps.append(convert_timestamp(data[0]))
-        temperature_trend[0]["data"].append(data[1])
+        timestamps.insert(0, convert_timestamp(data[0]))
+        temperature_trend[0]["data"].insert(0, data[1])
 
     return {
         "trend": temperature_trend,
         "timestamps": timestamps
+    }
+
+def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
+    result = metrics_repository.get_latest_metrics(id)[0]
+    metrics_status = [
+            get_status(result[2], rated_voltage),
+            get_status(result[3], rated_voltage),
+            get_status(result[4], rated_voltage),
+            get_status(result[5], rated_current),
+            get_status(result[6], rated_current),
+            get_status(result[7], rated_current),
+            get_status(result[8], max_temperature)
+    ]
+
+    normal_count = 0
+    warning_count = 0
+    critical_count = 0
+    
+    for status in metrics_status:
+        if status == "normal":
+            normal_count += 1
+        elif status == "warning":
+            warning_count += 1
+        elif status == "critical":
+            critical_count += 1
+
+    return {
+        "summary": [ normal_count, warning_count, critical_count ]
     }
