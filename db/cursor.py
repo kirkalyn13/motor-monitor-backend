@@ -36,7 +36,7 @@ def query(query_string):
 
 def test_db_connection():
     try:
-        connection = psycopg2.connect(
+        psycopg2.connect(
             host=db_host,
             database=db_name,
             user=db_user,
@@ -48,8 +48,6 @@ def test_db_connection():
     except OperationalError as e:
         print(f"Unable to connect to the database. Error: {e}")
         return False
-    finally:
-        connection.close()
 
 
 
