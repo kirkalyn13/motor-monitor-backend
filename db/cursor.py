@@ -26,9 +26,9 @@ def query(query_string):
         cursor = connection.cursor()
         cursor.execute(query_string)
         connection.commit()
-        print(f"Executed: {query_string}")
         return cursor.fetchall()
     except Exception as e:
+        print(f"Executed: {query_string}")
         print(f"Error Occurred: {e}")
     finally:
         cursor.close()
