@@ -1,9 +1,11 @@
+import utilities.severities as severity
+
 def get_status(value, limit):
-    if value > limit:
-        return "critical"
+    if value >= limit:
+        return severity.CRITICAL
     elif value == 0:
-        return "critical"
-    elif value > (limit*0.9):
-        return "warning"
+        return severity.CRITICAL
+    elif value >= limit:
+        return severity.WARNING
     else:
-        return "normal"
+        return severity.NORMAL

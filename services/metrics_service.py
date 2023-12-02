@@ -1,4 +1,5 @@
 import repositories.metrics_repository as metrics_repository
+import utilities.severities as severity
 import calculators.alarms as alarms
 from calculators.status import get_status
 from utilities.time import convert_timestamp
@@ -127,11 +128,11 @@ def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
     critical_count = 0
     
     for status in metrics_status:
-        if status == "normal":
+        if status == severity.NORMAL:
             normal_count += 1
-        elif status == "warning":
+        elif status == severity.WARNING:
             warning_count += 1
-        elif status == "critical":
+        elif status == severity.CRITICAL:
             critical_count += 1
 
     return {
@@ -143,58 +144,58 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
     alarms_list = []
 
     # Over Voltage
-    if alarms.check_over_voltage(result[2], rated_voltage) != alarms.NORMAL:
+    if alarms.check_over_voltage(result[2], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 1 Over Voltage",
             "status": alarms.check_over_voltage(result[2], rated_voltage)
         })
-    if alarms.check_over_voltage(result[3], rated_voltage) != alarms.NORMAL:
+    if alarms.check_over_voltage(result[3], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 2 Over Voltage",
             "status": alarms.check_over_voltage(result[3], rated_voltage)
         })
-    if alarms.check_over_voltage(result[4], rated_voltage) != alarms.NORMAL:
+    if alarms.check_over_voltage(result[4], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 3 Over Voltage",
             "status": alarms.check_over_voltage(result[4], rated_voltage)
         })
 
     # Under Voltage
-    if alarms.check_under_voltage(result[2], rated_voltage) != alarms.NORMAL:
+    if alarms.check_under_voltage(result[2], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 1 Under Voltage",
             "status": alarms.check_under_voltage(result[2], rated_voltage)
         })
-    if alarms.check_under_voltage(result[3], rated_voltage) != alarms.NORMAL:
+    if alarms.check_under_voltage(result[3], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 2 Under Voltage",
             "status": alarms.check_under_voltage(result[3], rated_voltage)
         })
-    if alarms.check_under_voltage(result[4], rated_voltage) != alarms.NORMAL:
+    if alarms.check_under_voltage(result[4], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 3 Under Voltage",
             "status": alarms.check_under_voltage(result[4], rated_voltage)
         })
 
     # Short Circuit
-    if alarms.check_short_circuit(result[5], rated_current) != alarms.NORMAL:
+    if alarms.check_short_circuit(result[5], rated_current) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 1 Short Circuit",
             "status": alarms.check_short_circuit(result[5], rated_current)
         })
-    if alarms.check_short_circuit(result[6], rated_current) != alarms.NORMAL:
+    if alarms.check_short_circuit(result[6], rated_current) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 2 Short Circuit",
             "status": alarms.check_short_circuit(result[6], rated_current)
         })
-    if alarms.check_short_circuit(result[7], rated_current) != alarms.NORMAL:
+    if alarms.check_short_circuit(result[7], rated_current) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Line 3 Short Circuit",
             "status": alarms.check_short_circuit(result[7], rated_current)
         })
 
     # Temperature
-    if alarms.check_temperature(result[8], max_temperature) != alarms.NORMAL:
+    if alarms.check_temperature(result[8], max_temperature) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Overheating",
             "status": alarms.check_temperature(result[8], max_temperature)
