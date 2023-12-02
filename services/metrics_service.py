@@ -1,4 +1,5 @@
 import repositories.metrics_repository as metrics_repository
+import calculators.alarms as alarms
 from calculators.status import get_status
 from utilities.time import convert_timestamp
 
@@ -136,3 +137,67 @@ def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
     return {
         "summary": [ normal_count, warning_count, critical_count ]
     }
+
+def get_alarms(id, rated_voltage, rated_current, max_temperature):
+    result = metrics_repository.get_latest_metrics(id)[0]
+    alarms_list = []
+
+    # Over Voltage
+    if alarms.check_over_voltage(result[2], rated_voltage) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 1 Over Voltage",
+            "status": alarms.check_over_voltage(result[2], rated_voltage)
+        })
+    if alarms.check_over_voltage(result[3], rated_voltage) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 2 Over Voltage",
+            "status": alarms.check_over_voltage(result[3], rated_voltage)
+        })
+    if alarms.check_over_voltage(result[4], rated_voltage) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 3 Over Voltage",
+            "status": alarms.check_over_voltage(result[4], rated_voltage)
+        })
+
+    # Under Voltage
+    if alarms.check_under_voltage(result[2], rated_voltage) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 1 Under Voltage",
+            "status": alarms.check_under_voltage(result[2], rated_voltage)
+        })
+    if alarms.check_under_voltage(result[3], rated_voltage) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 2 Under Voltage",
+            "status": alarms.check_under_voltage(result[3], rated_voltage)
+        })
+    if alarms.check_under_voltage(result[4], rated_voltage) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 3 Under Voltage",
+            "status": alarms.check_under_voltage(result[4], rated_voltage)
+        })
+
+    # Short Circuit
+    if alarms.check_short_circuit(result[5], rated_current) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 1 Short Circuit",
+            "status": alarms.check_short_circuit(result[5], rated_current)
+        })
+    if alarms.check_short_circuit(result[6], rated_current) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 2 Short Circuit",
+            "status": alarms.check_short_circuit(result[6], rated_current)
+        })
+    if alarms.check_short_circuit(result[7], rated_current) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 3 Short Circuit",
+            "status": alarms.check_short_circuit(result[7], rated_current)
+        })
+
+    # Temperature
+    if alarms.check_temperature(result[8], max_temperature) != alarms.NORMAL:
+        alarms_list.append({
+            "alarm": "Overheating",
+            "status": alarms.check_temperature(result[8], max_temperature)
+        })
+
+    return alarms_list

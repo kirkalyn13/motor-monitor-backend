@@ -53,3 +53,15 @@ def get_metrics_summary(id):
             return jsonify(result), 200
         except Exception as e:
             return jsonify(error(str(e))), 500
+        
+@app.route("/api/v1/metrics/alarms/<id>", methods=["GET"])
+def get_alarms(id):
+    if request.method == "GET":
+        try:
+            rated_voltage = float(request.args.get('ratedVoltage'))
+            rated_current = float(request.args.get('ratedCurrent'))
+            max_temperature = float(request.args.get('maxTemperature'))
+            result = metrics_service.get_alarms(id, rated_voltage, rated_current, max_temperature)
+            return jsonify(result), 200
+        except Exception as e:
+            return jsonify(error(str(e))), 500
