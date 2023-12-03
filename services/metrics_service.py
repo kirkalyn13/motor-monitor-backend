@@ -1,7 +1,7 @@
 import repositories.metrics_repository as metrics_repository
 import utilities.severities as severity
 import calculators.alarms as alarms
-from calculators.status import get_status
+import calculators.status as status
 from utilities.time import convert_timestamp
 
 def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
@@ -11,31 +11,31 @@ def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
         "unitID": result[1],
         "line1Voltage": {
             "value": result[2],
-            "status": get_status(result[2], rated_voltage)
+            "status": status.get_voltage_status(result[2], rated_voltage)
         },
         "line2Voltage": {
             "value": result[3],
-            "status": get_status(result[3], rated_voltage)
+            "status": status.get_voltage_status(result[3], rated_voltage)
         },
         "line3Voltage": {
             "value": result[4],
-            "status": get_status(result[4], rated_voltage)
+            "status": status.get_voltage_status(result[4], rated_voltage)
         },
         "line1Current": {
             "value": result[5],
-            "status": get_status(result[5], rated_current)
+            "status": status.get_current_status(result[5], rated_current)
         },
         "line2Current": {
             "value": result[6],
-            "status": get_status(result[6], rated_current)
+            "status": status.get_current_status(result[6], rated_current)
         },
         "line3Current": {
             "value": result[7],
-            "status": get_status(result[7], rated_current)
+            "status": status.get_current_status(result[7], rated_current)
         },
         "temperature": {
             "value": result[8],
-            "status": get_status(result[8], max_temperature)
+            "status": status.get_temperature_status(result[8], max_temperature)
         }
     }
     return latest_metrics
@@ -114,25 +114,25 @@ def get_temperature_trend(id):
 def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
     result = metrics_repository.get_latest_metrics(id)[0]
     metrics_status = [
-            get_status(result[2], rated_voltage),
-            get_status(result[3], rated_voltage),
-            get_status(result[4], rated_voltage),
-            get_status(result[5], rated_current),
-            get_status(result[6], rated_current),
-            get_status(result[7], rated_current),
-            get_status(result[8], max_temperature)
+            status.get_voltage_status(result[2], rated_voltage),
+            status.get_voltage_status(result[3], rated_voltage),
+            status.get_voltage_status(result[4], rated_voltage),
+            status.get_current_status(result[5], rated_current),
+            status.get_current_status(result[6], rated_current),
+            status.get_current_status(result[7], rated_current),
+            status.get_temperature_status(result[8], max_temperature)
     ]
 
     normal_count = 0
     warning_count = 0
     critical_count = 0
     
-    for status in metrics_status:
-        if status == severity.NORMAL:
+    for alarm_status in metrics_status:
+        if alarm_status == severity.NORMAL:
             normal_count += 1
-        elif status == severity.WARNING:
+        elif alarm_status == severity.WARNING:
             warning_count += 1
-        elif status == severity.CRITICAL:
+        elif alarm_status == severity.CRITICAL:
             critical_count += 1
 
     return {
@@ -193,12 +193,73 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
             "alarm": "Line 3 Short Circuit",
             "status": alarms.check_short_circuit(result[7], rated_current)
         })
+    
+    # No Output
+    if alarms.check_no_output(result[2]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 1 No Output",
+            "status": alarms.check_no_output(result[2])
+        })
+    if alarms.check_no_output(result[3]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 2 No Output",
+            "status": alarms.check_no_output(result[3])
+        })
+    if alarms.check_no_output(result[4]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 3 No Output",
+            "status": alarms.check_no_output(result[4])
+        })
+
+    # Open Circuit
+    if alarms.check_open_circuit(result[5]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 1 Open Circuit",
+            "status": alarms.check_open_circuit(result[5])
+        })
+    if alarms.check_open_circuit(result[6]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 2 Open Circuit",
+            "status": alarms.check_open_circuit(result[6])
+        })
+    if alarms.check_open_circuit(result[7]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 3 Open Circuit",
+            "status": alarms.check_open_circuit(result[7])
+        })
 
     # Temperature
     if alarms.check_temperature(result[8], max_temperature) != severity.NORMAL:
         alarms_list.append({
             "alarm": "Overheating",
             "status": alarms.check_temperature(result[8], max_temperature)
+        })
+
+    # Phase Loss
+    if alarms.check_phase_loss(result[5]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": alarms.check_phase_loss(result[5])
+        })
+    elif alarms.check_phase_loss(result[6]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": alarms.check_phase_loss(result[6])
+        })
+    elif alarms.check_phase_loss(result[7]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": alarms.check_phase_loss(result[7])
+        })
+    elif alarms.check_three_phase_loss([result[2], result[3], result[4]]):
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": severity.CRITICAL
+        })
+    elif alarms.check_three_phase_loss([result[5], result[6], result[7]]):
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": severity.CRITICAL
         })
 
     return alarms_list
