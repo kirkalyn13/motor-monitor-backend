@@ -194,6 +194,23 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
             "status": alarms.check_short_circuit(result[7], rated_current)
         })
 
+    # Open Circuit
+    if alarms.check_open_circuit(result[5]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 1 Open Circuit",
+            "status": alarms.check_open_circuit(result[5])
+        })
+    if alarms.check_open_circuit(result[6]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 2 Open Circuit",
+            "status": alarms.check_open_circuit(result[6])
+        })
+    if alarms.check_open_circuit(result[7]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Line 3 Open Circuit",
+            "status": alarms.check_open_circuit(result[7])
+        })
+
     # Temperature
     if alarms.check_temperature(result[8], max_temperature) != severity.NORMAL:
         alarms_list.append({

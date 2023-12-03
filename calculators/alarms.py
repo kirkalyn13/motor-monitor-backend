@@ -24,6 +24,12 @@ def check_short_circuit(current, threshold):
     else:
         return severity.NORMAL
     
+def check_open_circuit(current):
+    if current == 0:
+        return severity.CRITICAL
+    else:
+        return severity.NORMAL
+    
 def check_temperature(temperature, threshold):
     if temperature >= threshold:
         return severity.CRITICAL
