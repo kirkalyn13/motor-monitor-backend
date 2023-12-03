@@ -1,7 +1,7 @@
 import repositories.metrics_repository as metrics_repository
 import utilities.severities as severity
 import calculators.alarms as alarms
-from calculators.status import get_status
+import calculators.status as status
 from utilities.time import convert_timestamp
 
 def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
@@ -11,31 +11,31 @@ def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
         "unitID": result[1],
         "line1Voltage": {
             "value": result[2],
-            "status": get_status(result[2], rated_voltage)
+            "status": status.get_voltage_status(result[2], rated_voltage)
         },
         "line2Voltage": {
             "value": result[3],
-            "status": get_status(result[3], rated_voltage)
+            "status": status.get_voltage_status(result[3], rated_voltage)
         },
         "line3Voltage": {
             "value": result[4],
-            "status": get_status(result[4], rated_voltage)
+            "status": status.get_voltage_status(result[4], rated_voltage)
         },
         "line1Current": {
             "value": result[5],
-            "status": get_status(result[5], rated_current)
+            "status": status.get_current_status(result[5], rated_current)
         },
         "line2Current": {
             "value": result[6],
-            "status": get_status(result[6], rated_current)
+            "status": status.get_current_status(result[6], rated_current)
         },
         "line3Current": {
             "value": result[7],
-            "status": get_status(result[7], rated_current)
+            "status": status.get_current_status(result[7], rated_current)
         },
         "temperature": {
             "value": result[8],
-            "status": get_status(result[8], max_temperature)
+            "status": status.get_temperature_status(result[8], max_temperature)
         }
     }
     return latest_metrics
@@ -114,13 +114,13 @@ def get_temperature_trend(id):
 def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
     result = metrics_repository.get_latest_metrics(id)[0]
     metrics_status = [
-            get_status(result[2], rated_voltage),
-            get_status(result[3], rated_voltage),
-            get_status(result[4], rated_voltage),
-            get_status(result[5], rated_current),
-            get_status(result[6], rated_current),
-            get_status(result[7], rated_current),
-            get_status(result[8], max_temperature)
+            status.get_voltage_status(result[2], rated_voltage),
+            status.get_voltage_status(result[3], rated_voltage),
+            status.get_voltage_status(result[4], rated_voltage),
+            status.get_current_status(result[5], rated_current),
+            status.get_current_status(result[6], rated_current),
+            status.get_current_status(result[7], rated_current),
+            status.get_temperature_status(result[8], max_temperature)
     ]
 
     normal_count = 0
