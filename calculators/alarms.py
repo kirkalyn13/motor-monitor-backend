@@ -18,6 +18,12 @@ def check_under_voltage(voltage, threshold):
     else:
         return severity.NORMAL
     
+def check_no_output(voltage):
+    if voltage == 0:
+        return severity.CRITICAL
+    else:
+        return severity.NORMAL
+    
 def check_short_circuit(current, threshold):
     if current >= (threshold*4):
         return severity.CRITICAL
