@@ -127,12 +127,12 @@ def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
     warning_count = 0
     critical_count = 0
     
-    for status in metrics_status:
-        if status == severity.NORMAL:
+    for alarm_status in metrics_status:
+        if alarm_status == severity.NORMAL:
             normal_count += 1
-        elif status == severity.WARNING:
+        elif alarm_status == severity.WARNING:
             warning_count += 1
-        elif status == severity.CRITICAL:
+        elif alarm_status == severity.CRITICAL:
             critical_count += 1
 
     return {
