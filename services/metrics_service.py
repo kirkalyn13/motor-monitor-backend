@@ -235,4 +235,31 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
             "status": alarms.check_temperature(result[8], max_temperature)
         })
 
+    # Phase Loss
+    if alarms.check_phase_loss(result[5]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": alarms.check_phase_loss(result[5])
+        })
+    elif alarms.check_phase_loss(result[6]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": alarms.check_phase_loss(result[6])
+        })
+    elif alarms.check_phase_loss(result[7]) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": alarms.check_phase_loss(result[7])
+        })
+    elif alarms.check_three_phase_loss([result[2], result[3], result[4]]):
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": severity.CRITICAL
+        })
+    elif alarms.check_three_phase_loss([result[5], result[6], result[7]]):
+        alarms_list.append({
+            "alarm": "Phase Loss",
+            "status": severity.CRITICAL
+        })
+
     return alarms_list
