@@ -13,7 +13,7 @@ db_user = os.environ.get("DB_USER")
 db_password = os.environ.get("DB_PASSWORD")
 db_port = os.environ.get("DB_PORT")
 
-def query(query_string):
+def query(query_string, return_values = True):
     try:
         connection = psycopg2.connect(
             host=db_host,
@@ -25,7 +25,8 @@ def query(query_string):
         cursor = connection.cursor()
         cursor.execute(query_string)
         connection.commit()
-        return cursor.fetchall()
+        if (return_values == True):
+            return cursor.fetchall()
     except Exception as e:
         print(f"Executed: {query_string}")
         print(f"Error Occurred: {e}")
