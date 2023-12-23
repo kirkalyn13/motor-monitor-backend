@@ -263,3 +263,8 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
         })
 
     return alarms_list
+
+def add_metrics(id, line1_voltage, line2_voltage, line3_voltage, line1_current, line2_current, line3_current, temperature):
+    metrics_repository.add_metrics(id, line1_voltage, line2_voltage, line3_voltage, line1_current, line2_current, line3_current, temperature)
+    return { "metrics": [ id, line1_voltage, line2_voltage, line3_voltage, line1_current, line2_current, line3_current, temperature ] }
+        

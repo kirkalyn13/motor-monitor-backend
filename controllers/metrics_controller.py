@@ -65,3 +65,28 @@ def get_alarms(id):
             return jsonify(result), 200
         except Exception as e:
             return jsonify(error(str(e))), 500
+        
+@app.route("/api/v1/metrics/<id>", methods=["POST"])
+def add_metrics(id):
+    if request.method == "POST":
+        try:
+            line1_voltage = float(request.args.get('line1Voltage'))
+            line2_voltage = float(request.args.get('line2Voltage'))
+            line3_voltage = float(request.args.get('line3Voltage'))
+            line1_current = float(request.args.get('line1Current'))
+            line2_current = float(request.args.get('line2Current'))
+            line3_current = float(request.args.get('line3Current'))
+            temperature = float(request.args.get('temperature'))
+            result = metrics_service.add_metrics(
+                id, 
+                line1_voltage, 
+                line2_voltage, 
+                line3_voltage,
+                line1_current,
+                line2_current,
+                line3_current,
+                temperature
+                )
+            return jsonify(result), 201
+        except Exception as e:
+            return jsonify(error(str(e))), 500
