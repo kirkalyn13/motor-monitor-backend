@@ -5,7 +5,8 @@ app = Flask(__name__)
 
 # Define CORS options
 cors_config = {
-    "origins": ["https://motor-monitor-frontend.vercel.app", "http://localhost:3000"], 
+    # "origins": ["https://motor-monitor-frontend.vercel.app", "http://localhost:3000"], \
+    "origins": ["*"], 
     "methods": ["GET", "POST", "PUT", "DELETE"], 
     "allow_headers": ["Content-Type"],
     "supports_credentials": True,
