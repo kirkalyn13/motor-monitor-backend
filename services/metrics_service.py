@@ -40,7 +40,7 @@ def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
     }
     return latest_metrics
 
-def get_voltage_trend(id):
+def get_voltage_trend(id, limit):
     voltage_trend = [{
         "name": "Line 1 Voltage",
         "data": []
@@ -55,7 +55,7 @@ def get_voltage_trend(id):
     }]
     timestamps = []
 
-    result = metrics_repository.get_voltage_trend(id)
+    result = metrics_repository.get_voltage_trend(id, limit)
     for data in result:
         timestamps.insert(0, convert_timestamp(data[0]))
         voltage_trend[0]["data"].insert(0, data[1])
@@ -67,7 +67,7 @@ def get_voltage_trend(id):
         "timestamps": timestamps
     }
 
-def get_current_trend(id):
+def get_current_trend(id, limit):
     current_trend = [{
         "name": "Line 1 Current",
         "data": []
@@ -82,7 +82,7 @@ def get_current_trend(id):
     }]
     timestamps = []
 
-    result = metrics_repository.get_current_trend(id)
+    result = metrics_repository.get_current_trend(id, limit)
     for data in result:
         timestamps.insert(0, convert_timestamp(data[0]))
         current_trend[0]["data"].insert(0, data[1])
@@ -94,14 +94,14 @@ def get_current_trend(id):
         "timestamps": timestamps
     }
 
-def get_temperature_trend(id):
+def get_temperature_trend(id, limit):
     temperature_trend = [{
         "name": "Temperature",
         "data": []
     }]
     timestamps = []
 
-    result = metrics_repository.get_temperature_trend(id)
+    result = metrics_repository.get_temperature_trend(id, limit)
     for data in result:
         timestamps.insert(0, convert_timestamp(data[0]))
         temperature_trend[0]["data"].insert(0, data[1])

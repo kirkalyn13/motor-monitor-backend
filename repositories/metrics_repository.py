@@ -1,8 +1,6 @@
 from db.cursor import query
 from utilities.time import timestamp_format
 
-LIMIT = 12
-
 def get_latest_metrics(id):
     query_string = f"""
         SELECT 
@@ -22,33 +20,33 @@ def get_latest_metrics(id):
         """
     return query(query_string)
 
-def get_voltage_trend(id):
+def get_voltage_trend(id, limit):
     query_string = f"""
         SELECT {timestamp_format}, line1_voltage, line2_voltage, line3_voltage 
         FROM metrics
         WHERE motor_id = '{id}'
         ORDER BY timestamp DESC
-        LIMIT {LIMIT};
+        LIMIT {limit};
         """
     return query(query_string)
 
-def get_current_trend(id):
+def get_current_trend(id, limit):
     query_string = f"""
         SELECT {timestamp_format}, line1_current, line2_current, line3_current 
         FROM metrics
         WHERE motor_id = '{id}'
         ORDER BY timestamp DESC
-        LIMIT {LIMIT};
+        LIMIT {limit};
         """
     return query(query_string)
 
-def get_temperature_trend(id):
+def get_temperature_trend(id, limit):
     query_string = f"""
         SELECT {timestamp_format}, temperature 
         FROM metrics
         WHERE motor_id = '{id}'
         ORDER BY timestamp DESC
-        LIMIT {LIMIT};
+        LIMIT {limit};
         """
     return query(query_string)
 
