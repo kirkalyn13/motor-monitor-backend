@@ -19,7 +19,8 @@ def get_latest_metrics(id):
 def get_voltage_trend(id):
     if request.method == "GET":
         try:
-            result = metrics_service.get_voltage_trend(id)
+            limit = int(request.args.get('period'))
+            result = metrics_service.get_voltage_trend(id, limit)
             return jsonify(result), 200
         except Exception as e:
             return jsonify(error(str(e))), 500
@@ -28,7 +29,8 @@ def get_voltage_trend(id):
 def get_current_trend(id):
     if request.method == "GET":
         try:
-            result = metrics_service.get_current_trend(id)
+            limit = int(request.args.get('period'))
+            result = metrics_service.get_current_trend(id, limit)
             return jsonify(result), 200
         except Exception as e:
             return jsonify(error(str(e))), 500
@@ -37,7 +39,8 @@ def get_current_trend(id):
 def get_temperature_trend(id):
     if request.method == "GET":
         try:
-            result = metrics_service.get_temperature_trend(id)
+            limit = int(request.args.get('period'))
+            result = metrics_service.get_temperature_trend(id, limit)
             return jsonify(result), 200
         except Exception as e:
             return jsonify(error(str(e))), 500
