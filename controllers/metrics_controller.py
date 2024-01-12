@@ -93,3 +93,13 @@ def add_metrics(id):
             return jsonify(result), 201
         except Exception as e:
             return jsonify(error(str(e))), 500
+        
+@app.route("/api/v1/metrics/download/<id>", methods=["GET"])
+def get_csv_logs(id):
+    if request.method == "GET":
+        try:
+            limit = int(request.args.get('period'))
+            result = metrics_service.get_metrics_logs(id, limit)
+            return jsonify(result), 200
+        except Exception as e:
+            return jsonify(error(str(e))), 500

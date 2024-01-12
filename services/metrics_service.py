@@ -257,4 +257,22 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
 def add_metrics(id, line1_voltage, line2_voltage, line3_voltage, line1_current, line2_current, line3_current, temperature):
     metrics_repository.add_metrics(id, line1_voltage, line2_voltage, line3_voltage, line1_current, line2_current, line3_current, temperature)
     return { "metrics": [ id, line1_voltage, line2_voltage, line3_voltage, line1_current, line2_current, line3_current, temperature ] }
-        
+
+def get_metrics_logs(id, limit):
+    logs = []
+
+    result = metrics_repository.get_metrics_logs(id, limit)
+    for data in result:
+        logs.insert(0, {
+            "timestamp": data[1],
+            "id": data[2],
+            "line1_voltage": data[3],
+            "line2_voltage": data[4],
+            "line3_voltage": data[5],
+            "line1_current": data[6],
+            "line2_current": data[7],
+            "line3_current": data[8],
+            "temperature": data[9],
+        })
+
+    return logs   

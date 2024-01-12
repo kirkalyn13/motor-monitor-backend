@@ -76,3 +76,13 @@ def add_metrics(id, line1_voltage, line2_voltage, line3_voltage, line1_current, 
         );
         """
     return query(query_string, False)
+
+def get_metrics_logs(id, limit):
+    query_string = f"""
+        SELECT *
+        FROM metrics
+        WHERE motor_id = '{id}'
+        ORDER BY timestamp DESC
+        LIMIT {limit};
+        """
+    return query(query_string)
