@@ -17,9 +17,7 @@ def get_voltage_status(value, threshold):
         return severity.NORMAL
     
 def get_current_status(value, threshold):
-    if value >= (4*threshold):
-        return severity.CRITICAL
-    elif value == 0:
+    if value >= (1.25*threshold):
         return severity.CRITICAL
     else:
         return severity.NORMAL
