@@ -20,8 +20,8 @@ def check_under_voltage(voltage, threshold):
     else:
         return severity.NORMAL
     
-def check_no_output(voltage):
-    if voltage == 0:
+def check_no_output(voltage, threshold):
+    if voltage <= (0.1*threshold):
         return severity.CRITICAL
     else:
         return severity.NORMAL

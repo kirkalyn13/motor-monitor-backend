@@ -42,15 +42,15 @@ def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
 
 def get_voltage_trend(id, limit):
     voltage_trend = [{
-        "name": "Line 1 Voltage",
+        "name": "Phase 1 Voltage",
         "data": []
     },
     {
-        "name": 'Line 2 Voltage',
+        "name": 'Phase 2 Voltage',
         "data": []
     },
     {
-        "name": "Line 3 Voltage",
+        "name": "Phase 3 Voltage",
         "data": []
     }]
     timestamps = []
@@ -146,34 +146,34 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
     # Over Voltage
     if alarms.check_over_voltage(result[2], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 1 Over Voltage",
+            "alarm": "Phase 1 Over Voltage",
             "status": alarms.check_over_voltage(result[2], rated_voltage)
         })
     if alarms.check_over_voltage(result[3], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 2 Over Voltage",
+            "alarm": "Phase 2 Over Voltage",
             "status": alarms.check_over_voltage(result[3], rated_voltage)
         })
     if alarms.check_over_voltage(result[4], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 3 Over Voltage",
+            "alarm": "Phase 3 Over Voltage",
             "status": alarms.check_over_voltage(result[4], rated_voltage)
         })
 
     # Under Voltage
     if alarms.check_under_voltage(result[2], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 1 Under Voltage",
+            "alarm": "Phase 1 Under Voltage",
             "status": alarms.check_under_voltage(result[2], rated_voltage)
         })
     if alarms.check_under_voltage(result[3], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 2 Under Voltage",
+            "alarm": "Phase 2 Under Voltage",
             "status": alarms.check_under_voltage(result[3], rated_voltage)
         })
     if alarms.check_under_voltage(result[4], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 3 Under Voltage",
+            "alarm": "Phase 3 Under Voltage",
             "status": alarms.check_under_voltage(result[4], rated_voltage)
         })
 
@@ -195,20 +195,20 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
         })
     
     # No Output
-    if alarms.check_no_output(result[2]) != severity.NORMAL:
+    if alarms.check_no_output(result[2], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 1 No Output",
-            "status": alarms.check_no_output(result[2])
+            "alarm": "Line 1 No Power",
+            "status": alarms.check_no_output(result[2], rated_voltage)
         })
-    if alarms.check_no_output(result[3]) != severity.NORMAL:
+    if alarms.check_no_output(result[3], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 2 No Output",
-            "status": alarms.check_no_output(result[3])
+            "alarm": "Line 2 No Power",
+            "status": alarms.check_no_output(result[3], rated_voltage)
         })
-    if alarms.check_no_output(result[4]) != severity.NORMAL:
+    if alarms.check_no_output(result[4], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 3 No Output",
-            "status": alarms.check_no_output(result[4])
+            "alarm": "Line 3 No Power",
+            "status": alarms.check_no_output(result[4], rated_voltage)
         })
 
     # Open Circuit
@@ -238,17 +238,17 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
     # Phase Loss
     if alarms.check_phase_loss(result[5]) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Phase Loss",
+            "alarm": "Overcurrent due to Phase Loss",
             "status": alarms.check_phase_loss(result[5])
         })
     elif alarms.check_phase_loss(result[6]) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Phase Loss",
+            "alarm": "Overcurrent due to Phase Loss",
             "status": alarms.check_phase_loss(result[6])
         })
     elif alarms.check_phase_loss(result[7]) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Phase Loss",
+            "alarm": "Overcurrent due to Phase Loss",
             "status": alarms.check_phase_loss(result[7])
         })
 
