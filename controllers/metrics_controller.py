@@ -103,3 +103,16 @@ def get_csv_logs(id):
             return jsonify(result), 200
         except Exception as e:
             return jsonify(error(str(e))), 500
+        
+@app.route("/api/v1/metrics/alarms/download/<id>", methods=["GET"])
+def get_alarms_history(id):
+    if request.method == "GET":
+        try:
+            rated_voltage = float(request.args.get('ratedVoltage'))
+            rated_current = float(request.args.get('ratedCurrent'))
+            max_temperature = float(request.args.get('maxTemperature'))
+            limit = int(request.args.get('period'))
+            result = metrics_service.get_alarms_history(id, rated_voltage, rated_current, max_temperature, limit)
+            return jsonify(result), 200
+        except Exception as e:
+            return jsonify(error(str(e))), 500
