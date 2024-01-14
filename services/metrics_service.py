@@ -211,13 +211,6 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
             "status": alarms.check_no_power(result[4], rated_voltage)
         })
 
-    # Temperature
-    if alarms.check_temperature(result[8], max_temperature) != severity.NORMAL:
-        alarms_list.append({
-            "alarm": "Overheating",
-            "status": alarms.check_temperature(result[8], max_temperature)
-        })
-
     # Phase Loss
     phase_loss_alarm = "Overcurrent due to Phase Loss"
     if alarms.check_phase_loss(result[5], rated_current) != severity.NORMAL:
@@ -234,6 +227,13 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
         alarms_list.append({
             "alarm": phase_loss_alarm,
             "status": alarms.check_phase_loss(result[7], rated_current)
+        })
+
+    # Temperature
+    if alarms.check_temperature(result[8], max_temperature) != severity.NORMAL:
+        alarms_list.append({
+            "alarm": "Overheating",
+            "status": alarms.check_temperature(result[8], max_temperature)
         })
 
     return alarms_list
