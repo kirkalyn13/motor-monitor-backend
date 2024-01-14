@@ -195,20 +195,20 @@ def get_alarms(id, rated_voltage, rated_current, max_temperature):
         })
     
     # No Output
-    if alarms.check_no_output(result[2]) != severity.NORMAL:
+    if alarms.check_no_output(result[2], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 1 No Output",
-            "status": alarms.check_no_output(result[2])
+            "alarm": "Line 1 No Power",
+            "status": alarms.check_no_output(result[2], rated_voltage)
         })
-    if alarms.check_no_output(result[3]) != severity.NORMAL:
+    if alarms.check_no_output(result[3], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 2 No Output",
-            "status": alarms.check_no_output(result[3])
+            "alarm": "Line 2 No Power",
+            "status": alarms.check_no_output(result[3], rated_voltage)
         })
-    if alarms.check_no_output(result[4]) != severity.NORMAL:
+    if alarms.check_no_output(result[4], rated_voltage) != severity.NORMAL:
         alarms_list.append({
-            "alarm": "Line 3 No Output",
-            "status": alarms.check_no_output(result[4])
+            "alarm": "Line 3 No Power",
+            "status": alarms.check_no_output(result[4], rated_voltage)
         })
 
     # Open Circuit
