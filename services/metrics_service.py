@@ -2,42 +2,13 @@ import repositories.metrics_repository as metrics_repository
 import utilities.severities as severity
 import calculators.alarms as alarms
 import calculators.status as status
+import utilities.constants as constants
 from utilities.time import convert_timestamp, generate_timestamps, revert_timestamp
 
 def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
     results = metrics_repository.get_latest_metrics(id)
     if len(results) == 0 :
-        return {
-            "unitID": id,
-            "line1Voltage": {
-                "value": 0.0,
-                "status": severity.CRITICAL
-            },
-            "line2Voltage": {
-                "value": 0.0,
-                "status": severity.CRITICAL
-            },
-            "line3Voltage": {
-                "value": 0.0,
-                "status": severity.CRITICAL
-            },
-            "line1Current": {
-                "value": 0.0,
-                "status": severity.CRITICAL
-            },
-            "line2Current": {
-                "value": 0.0,
-                "status": severity.CRITICAL
-            },
-            "line3Current": {
-                "value": 0.0,
-                "status": severity.CRITICAL
-            },
-            "temperature": {
-                "value": 0.0,
-                "status": severity.CRITICAL
-            }
-        }
+        return constants.NULL_LATEST_METRICS
 
     result = results[0]
     latest_metrics = {
@@ -93,9 +64,7 @@ def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
     results = metrics_repository.get_latest_metrics(id)
 
     if len(results) == 0:
-        return {
-        "summary": [ 0, 0, 7 ]
-    }
+        return constants.NULL_METRICS_SUMMARY
 
     result = results[0]
     metrics_status = [
@@ -126,38 +95,8 @@ def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
 
 def get_alarms(id, rated_voltage, rated_current, max_temperature):
     results = metrics_repository.get_latest_metrics(id)
-    print(results)
     if len(results) == 0:
-        return [
-            {
-            "alarm": "No Data for Phase 1 Voltage",
-            "status": severity.CRITICAL
-            },
-            {
-            "alarm": "No Data for Phase 2 Voltage",
-            "status": severity.CRITICAL
-            },
-            {
-            "alarm": "No Data for Phase 3 Voltage",
-            "status": severity.CRITICAL
-            },
-            {
-            "alarm": "No Data for Line 1 Current",
-            "status": severity.CRITICAL
-            },
-            {
-            "alarm": "No Data for Line 2 Current",
-            "status": severity.CRITICAL
-            },
-            {
-            "alarm": "No Data for Line 3 Current",
-            "status": severity.CRITICAL
-            },
-            {
-            "alarm": "No Data for Temperature",
-            "status": severity.CRITICAL
-            },
-        ]
+        return constants.NULL_ALARMS_LIST
         
     result = results[0]
     alarms_list = analyze_metrics(result, rated_voltage, rated_current, max_temperature)
