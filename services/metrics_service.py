@@ -2,7 +2,7 @@ import repositories.metrics_repository as metrics_repository
 import utilities.severities as severity
 import calculators.alarms as alarms
 import calculators.status as status
-from utilities.time import convert_timestamp
+from utilities.time import convert_timestamp, generate_timestamps, revert_timestamp
 
 def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
     result = metrics_repository.get_latest_metrics(id)[0]
@@ -41,75 +41,19 @@ def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
     return latest_metrics
 
 def get_voltage_trend(id, limit):
-    voltage_trend = [{
-        "name": "Phase 1 Voltage",
-        "data": []
-    },
-    {
-        "name": 'Phase 2 Voltage',
-        "data": []
-    },
-    {
-        "name": "Phase 3 Voltage",
-        "data": []
-    }]
-    timestamps = []
-
+    voltage_trends = ["Phase 1 Voltage", "Phase 2 Voltage", "Phase 3 Voltage"]
     result = metrics_repository.get_voltage_trend(id, limit)
-    for data in result:
-        timestamps.insert(0, convert_timestamp(data[0]))
-        voltage_trend[0]["data"].insert(0, data[1])
-        voltage_trend[1]["data"].insert(0, data[2])
-        voltage_trend[2]["data"].insert(0, data[3])
-
-    return {
-        "trend": voltage_trend,
-        "timestamps": timestamps
-    }
+    return generate_trend(result, voltage_trends, limit)
 
 def get_current_trend(id, limit):
-    current_trend = [{
-        "name": "Line 1 Current",
-        "data": []
-    },
-    {
-        "name": 'Line 2 Current',
-        "data": []
-    },
-    {
-        "name": "Line 3 Current",
-        "data": []
-    }]
-    timestamps = []
-
+    current_trends = ["Line 1 Current", "Line 2 Current", "Line 3 Current"]
     result = metrics_repository.get_current_trend(id, limit)
-    for data in result:
-        timestamps.insert(0, convert_timestamp(data[0]))
-        current_trend[0]["data"].insert(0, data[1])
-        current_trend[1]["data"].insert(0, data[2])
-        current_trend[2]["data"].insert(0, data[3])
-
-    return {
-        "trend": current_trend,
-        "timestamps": timestamps
-    }
+    return generate_trend(result, current_trends, limit)
 
 def get_temperature_trend(id, limit):
-    temperature_trend = [{
-        "name": "Temperature",
-        "data": []
-    }]
-    timestamps = []
-
+    temperature_trends = ["Temperature"]
     result = metrics_repository.get_temperature_trend(id, limit)
-    for data in result:
-        timestamps.insert(0, convert_timestamp(data[0]))
-        temperature_trend[0]["data"].insert(0, data[1])
-
-    return {
-        "trend": temperature_trend,
-        "timestamps": timestamps
-    }
+    return generate_trend(result, temperature_trends, limit)
 
 def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
     result = metrics_repository.get_latest_metrics(id)[0]
@@ -149,12 +93,14 @@ def add_metrics(id, line1_voltage, line2_voltage, line3_voltage, line1_current, 
 
     return { "metrics": [ id, line1_voltage, line2_voltage, line3_voltage, line1_current, line2_current, line3_current, temperature ] }
 
-def get_metrics_logs(id, limit):
+def get_metrics_logs(id, limit): 
+    result = metrics_repository.get_metrics_logs(id, limit)
+    timestamps = generate_timestamps(limit)
+    raw = []
     logs = []
 
-    result = metrics_repository.get_metrics_logs(id, limit)
     for data in result:
-        logs.insert(0, {
+        raw.insert(0, {
             "timestamp": data[1],
             "id": data[2],
             "line1_voltage": data[3],
@@ -166,7 +112,45 @@ def get_metrics_logs(id, limit):
             "temperature": data[9],
         })
 
-    return logs   
+    if len(result) == 0:
+        for timestamp in timestamps:
+           logs.insert(0, {
+            "timestamp": timestamp,
+            "id": id,
+            "line1_voltage": 0.00,
+            "line2_voltage": 0.00,
+            "line3_voltage": 0.00,
+            "line1_current": 0.00,
+            "line2_current": 0.00,
+            "line3_current": 0.00,
+            "temperature": 0.00,
+        }) 
+    
+    else:
+        counter = 0
+        raw_limit = len(raw) - 1
+        for timestamp in timestamps:
+            current_timestamp = convert_timestamp(raw[counter]["timestamp"])
+            if timestamp == current_timestamp:
+                raw[counter]["timestamp"] = revert_timestamp(timestamp)
+                logs.append(raw[counter])
+                if counter < raw_limit :
+                    counter += 1
+            else:
+                logs.insert(0, {
+                    "timestamp": revert_timestamp(timestamp),
+                    "id": id,
+                    "line1_voltage": 0.00,
+                    "line2_voltage": 0.00,
+                    "line3_voltage": 0.00,
+                    "line1_current": 0.00,
+                    "line2_current": 0.00,
+                    "line3_current": 0.00,
+                    "temperature": 0.00,
+                }) 
+ 
+    
+    return sorted(logs, key = lambda x: str(x['timestamp']))
 
 def get_alarms_history(id, rated_voltage, rated_current, max_temperature, limit):
     alarms_history = []
@@ -294,4 +278,57 @@ def analyze_metrics(result, rated_voltage, rated_current, max_temperature):
         })
 
     return alarms_list
+
+def generate_trend(result, trend_names, limit):
+    recorded_timestamps = generate_timestamps(limit)
+    raw = []
+    trend = []
+    timestamps = []
+
+    for trend_name in trend_names:
+        trend.append({
+            "name": trend_name,
+            "data": []
+        })
+    trend_sets = len(trend)
+
+    
+    for data in result:
+        if trend_sets >= 2:
+            raw.insert(0, [convert_timestamp(data[0]), data[1], data[2], data[3]])
+        else:
+            raw.insert(0, [convert_timestamp(data[0]), data[1]])
+
+    if len(result) == 0:
+        timestamps.extend(recorded_timestamps)
+        trend[0]["data"].extend([0.00] * limit)
+        if trend_sets >= 2:
+            trend[1]["data"].extend([0.00] * limit)
+            trend[2]["data"].extend([0.00] * limit)
+    
+    else:
+        counter = 0
+        raw_limit = len(raw) - 1
+        for timestamp in recorded_timestamps:
+            if timestamp == raw[counter][0]:
+                data = raw[counter]
+                timestamps.append(data[0])
+                trend[0]["data"].append(data[1])
+                if trend_sets >= 2:
+                    trend[1]["data"].append(data[2])
+                    trend[2]["data"].append(data[3])
+                if counter < raw_limit :
+                    counter += 1
+            else:
+                timestamps.append(timestamp)
+                trend[0]["data"].append(0.00)
+                if trend_sets >= 2:
+                    trend[1]["data"].append(0.00)
+                    trend[2]["data"].append(0.00)
+ 
+    
+    return {
+        "trend": trend,
+        "timestamps": timestamps
+    }
 

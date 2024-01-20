@@ -82,7 +82,17 @@ def add_metrics(id, line1_voltage, line2_voltage, line3_voltage, line1_current, 
 
 def get_metrics_logs(id, limit):
     query_string = f"""
-        SELECT *
+        SELECT 
+        id,
+        {timestamp_format}, 
+        motor_id,
+        line1_voltage,
+        line2_voltage,
+        line3_voltage,
+        line1_current,
+        line2_current,
+        line3_current,
+        temperature 
         FROM metrics
         WHERE motor_id = '{id}'
         AND timestamp 
