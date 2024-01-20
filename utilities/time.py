@@ -30,3 +30,12 @@ def generate_timestamps(period):
     timestamps = [(start_time + timedelta(minutes = i)).strftime("%m/%d - %H:%M") for i in range(period + 1)]
 
     return timestamps
+
+def revert_timestamp(input_timestamp):
+    parsed_timestamp = datetime.strptime(input_timestamp, "%m/%d - %H:%M")
+    current_year = datetime.now().year
+    parsed_timestamp = parsed_timestamp.replace(year=current_year)
+    gmt_timezone = pytz.timezone('GMT')
+    parsed_timestamp = gmt_timezone.localize(parsed_timestamp)
+    reverted_timestamp = parsed_timestamp.strftime('%a, %d %b %Y %H:%M:%S GMT')
+    return reverted_timestamp

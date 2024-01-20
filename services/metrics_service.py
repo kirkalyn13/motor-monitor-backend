@@ -2,7 +2,7 @@ import repositories.metrics_repository as metrics_repository
 import utilities.severities as severity
 import calculators.alarms as alarms
 import calculators.status as status
-from utilities.time import convert_timestamp, generate_timestamps
+from utilities.time import convert_timestamp, generate_timestamps, revert_timestamp
 
 def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
     result = metrics_repository.get_latest_metrics(id)[0]
@@ -93,12 +93,14 @@ def add_metrics(id, line1_voltage, line2_voltage, line3_voltage, line1_current, 
 
     return { "metrics": [ id, line1_voltage, line2_voltage, line3_voltage, line1_current, line2_current, line3_current, temperature ] }
 
-def get_metrics_logs(id, limit):
+def get_metrics_logs(id, limit): 
+    result = metrics_repository.get_metrics_logs(id, limit)
+    timestamps = generate_timestamps(limit)
+    raw = []
     logs = []
 
-    result = metrics_repository.get_metrics_logs(id, limit)
     for data in result:
-        logs.insert(0, {
+        raw.insert(0, {
             "timestamp": data[1],
             "id": data[2],
             "line1_voltage": data[3],
@@ -110,7 +112,45 @@ def get_metrics_logs(id, limit):
             "temperature": data[9],
         })
 
-    return logs   
+    if len(result) == 0:
+        for timestamp in timestamps:
+           logs.insert(0, {
+            "timestamp": timestamp,
+            "id": id,
+            "line1_voltage": 0.00,
+            "line2_voltage": 0.00,
+            "line3_voltage": 0.00,
+            "line1_current": 0.00,
+            "line2_current": 0.00,
+            "line3_current": 0.00,
+            "temperature": 0.00,
+        }) 
+    
+    else:
+        counter = 0
+        raw_limit = len(raw) - 1
+        for timestamp in timestamps:
+            current_timestamp = convert_timestamp(raw[counter]["timestamp"])
+            if timestamp == current_timestamp:
+                raw[counter]["timestamp"] = revert_timestamp(timestamp)
+                logs.append(raw[counter])
+                if counter < raw_limit :
+                    counter += 1
+            else:
+                logs.insert(0, {
+                    "timestamp": revert_timestamp(timestamp),
+                    "id": id,
+                    "line1_voltage": 0.00,
+                    "line2_voltage": 0.00,
+                    "line3_voltage": 0.00,
+                    "line1_current": 0.00,
+                    "line2_current": 0.00,
+                    "line3_current": 0.00,
+                    "temperature": 0.00,
+                }) 
+ 
+    
+    return sorted(logs, key = lambda x: str(x['timestamp']))
 
 def get_alarms_history(id, rated_voltage, rated_current, max_temperature, limit):
     alarms_history = []
