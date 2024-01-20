@@ -38,4 +38,5 @@ def revert_timestamp(input_timestamp):
     gmt_timezone = pytz.timezone('GMT')
     parsed_timestamp = gmt_timezone.localize(parsed_timestamp)
     reverted_timestamp = parsed_timestamp.strftime('%a, %d %b %Y %H:%M:%S GMT')
+    
     return reverted_timestamp

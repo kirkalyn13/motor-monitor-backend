@@ -15,6 +15,8 @@ def get_latest_metrics(id):
         temperature 
         FROM metrics
         WHERE motor_id = '{id}'
+        AND timestamp 
+        BETWEEN {get_timestamp_range(1)}
         ORDER BY timestamp DESC
         LIMIT 1;
         """
