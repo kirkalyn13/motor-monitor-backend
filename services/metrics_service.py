@@ -5,7 +5,41 @@ import calculators.status as status
 from utilities.time import convert_timestamp, generate_timestamps, revert_timestamp
 
 def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
-    result = metrics_repository.get_latest_metrics(id)[0]
+    results = metrics_repository.get_latest_metrics(id)
+    if len(results) == 0 :
+        return {
+            "unitID": id,
+            "line1Voltage": {
+                "value": 0.0,
+                "status": severity.CRITICAL
+            },
+            "line2Voltage": {
+                "value": 0.0,
+                "status": severity.CRITICAL
+            },
+            "line3Voltage": {
+                "value": 0.0,
+                "status": severity.CRITICAL
+            },
+            "line1Current": {
+                "value": 0.0,
+                "status": severity.CRITICAL
+            },
+            "line2Current": {
+                "value": 0.0,
+                "status": severity.CRITICAL
+            },
+            "line3Current": {
+                "value": 0.0,
+                "status": severity.CRITICAL
+            },
+            "temperature": {
+                "value": 0.0,
+                "status": severity.CRITICAL
+            }
+        }
+
+    result = results[0]
     latest_metrics = {
         "timestamp": result[0],
         "unitID": result[1],
@@ -56,7 +90,14 @@ def get_temperature_trend(id, limit):
     return generate_trend(result, temperature_trends, limit)
 
 def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
-    result = metrics_repository.get_latest_metrics(id)[0]
+    results = metrics_repository.get_latest_metrics(id)
+
+    if len(results) == 0:
+        return {
+        "summary": [ 0, 0, 7 ]
+    }
+
+    result = results[0]
     metrics_status = [
             status.get_voltage_status(result[2], rated_voltage),
             status.get_voltage_status(result[3], rated_voltage),
@@ -84,7 +125,41 @@ def get_metrics_summary(id, rated_voltage, rated_current, max_temperature):
     }
 
 def get_alarms(id, rated_voltage, rated_current, max_temperature):
-    result = metrics_repository.get_latest_metrics(id)[0]
+    results = metrics_repository.get_latest_metrics(id)
+    print(results)
+    if len(results) == 0:
+        return [
+            {
+            "alarm": "No Data for Phase 1 Voltage",
+            "status": severity.CRITICAL
+            },
+            {
+            "alarm": "No Data for Phase 2 Voltage",
+            "status": severity.CRITICAL
+            },
+            {
+            "alarm": "No Data for Phase 3 Voltage",
+            "status": severity.CRITICAL
+            },
+            {
+            "alarm": "No Data for Line 1 Current",
+            "status": severity.CRITICAL
+            },
+            {
+            "alarm": "No Data for Line 2 Current",
+            "status": severity.CRITICAL
+            },
+            {
+            "alarm": "No Data for Line 3 Current",
+            "status": severity.CRITICAL
+            },
+            {
+            "alarm": "No Data for Temperature",
+            "status": severity.CRITICAL
+            },
+        ]
+        
+    result = results[0]
     alarms_list = analyze_metrics(result, rated_voltage, rated_current, max_temperature)
     return alarms_list
 
@@ -232,19 +307,19 @@ def analyze_metrics(result, rated_voltage, rated_current, max_temperature):
     if alarms.check_no_power(result[2], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "timestamp": result[0],
-            "alarm": "Line 1 No Power",
+            "alarm": "Phase 1 No Power",
             "status": alarms.check_no_power(result[2], rated_voltage)
         })
     if alarms.check_no_power(result[3], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "timestamp": result[0],
-            "alarm": "Line 2 No Power",
+            "alarm": "Phase 2 No Power",
             "status": alarms.check_no_power(result[3], rated_voltage)
         })
     if alarms.check_no_power(result[4], rated_voltage) != severity.NORMAL:
         alarms_list.append({
             "timestamp": result[0],
-            "alarm": "Line 3 No Power",
+            "alarm": "Phase 3 No Power",
             "status": alarms.check_no_power(result[4], rated_voltage)
         })
 
