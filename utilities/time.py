@@ -15,8 +15,14 @@ def convert_timestamp(timestamp):
 def get_timestamp_range(period = 15):
     current_time = datetime.utcnow()
     start_time = current_time - timedelta(minutes = period)
-
     start_timestamp_str = start_time.strftime('%Y-%m-%d %H:%M:%S')
     end_timestamp_str = current_time.strftime('%Y-%m-%d %H:%M:%S')
 
     return "'" + start_timestamp_str + "' AND '" + end_timestamp_str + "'"
+
+def generate_timestamps(period):
+    current_time = datetime.utcnow()
+    start_time = current_time - timedelta(minutes=period)
+    timestamps = [(start_time + timedelta(minutes=i)).strftime("%m/%d - %H:%M") for i in range(period + 1)]
+
+    return timestamps

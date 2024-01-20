@@ -2,7 +2,7 @@ import repositories.metrics_repository as metrics_repository
 import utilities.severities as severity
 import calculators.alarms as alarms
 import calculators.status as status
-from utilities.time import convert_timestamp
+from utilities.time import convert_timestamp, generate_timestamps
 
 def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
     result = metrics_repository.get_latest_metrics(id)[0]
@@ -41,6 +41,8 @@ def get_latest_metrics(id, rated_voltage, rated_current, max_temperature):
     return latest_metrics
 
 def get_voltage_trend(id, limit):
+    recorded_timestamps = generate_timestamps(limit)
+    raw = []
     voltage_trend = [{
         "name": "Phase 1 Voltage",
         "data": []
@@ -57,11 +59,29 @@ def get_voltage_trend(id, limit):
 
     result = metrics_repository.get_voltage_trend(id, limit)
     for data in result:
-        timestamps.insert(0, convert_timestamp(data[0]))
-        voltage_trend[0]["data"].insert(0, data[1])
-        voltage_trend[1]["data"].insert(0, data[2])
-        voltage_trend[2]["data"].insert(0, data[3])
+        raw.insert(0, [convert_timestamp(data[0]), data[1], data[2], data[3]])
 
+    counter = 0
+    for timestamp in recorded_timestamps:
+        if timestamp != raw[counter]:
+            timestamps.insert(0, timestamps)
+            voltage_trend[0]["data"].insert(0, 0.00)
+            voltage_trend[1]["data"].insert(0, 0.00)
+            voltage_trend[2]["data"].insert(0, 0.00)
+        else:
+            data = raw[counter]
+            timestamps.insert(0, data[0])
+            voltage_trend[0]["data"].insert(0, data[1])
+            voltage_trend[1]["data"].insert(0, data[2])
+            voltage_trend[2]["data"].insert(0, data[3])
+        # timestamps.insert(0, convert_timestamp(data[0]))
+        # voltage_trend[0]["data"].insert(0, data[1])
+        # voltage_trend[1]["data"].insert(0, data[2])
+        # voltage_trend[2]["data"].insert(0, data[3])
+    print({
+        "trend": voltage_trend,
+        "timestamps": timestamps
+    })       
     return {
         "trend": voltage_trend,
         "timestamps": timestamps
