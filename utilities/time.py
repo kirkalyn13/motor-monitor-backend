@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+import pytz
 
 timestamp_format = """
     timestamp
@@ -21,8 +22,9 @@ def get_timestamp_range(period = 15):
     return "'" + start_timestamp_str + "' AND '" + end_timestamp_str + "'"
 
 def generate_timestamps(period):
-    current_time = datetime.utcnow()
-    start_time = current_time - timedelta(minutes=period)
+    tz_mnl = pytz.timezone('Asia/Manila')
+    current_time = datetime.now(tz_mnl)
+    start_time = current_time - timedelta(minutes = period + 1)
     timestamps = [(start_time + timedelta(minutes=i)).strftime("%m/%d - %H:%M") for i in range(period + 1)]
 
     return timestamps
