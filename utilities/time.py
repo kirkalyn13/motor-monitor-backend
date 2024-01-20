@@ -16,7 +16,7 @@ def convert_timestamp(timestamp):
     return datetime_object.strftime("%m/%d - %H:%M")
 
 def get_timestamp_range(period = 15):
-    current_time = datetime.utcnow()
+    current_time = datetime.utcnow() - timedelta(minutes = 1)
     start_time = current_time - timedelta(minutes = period)
     start_timestamp_str = start_time.strftime('%Y-%m-%d %H:%M:%S')
     end_timestamp_str = current_time.strftime('%Y-%m-%d %H:%M:%S')
@@ -25,7 +25,7 @@ def get_timestamp_range(period = 15):
 
 def generate_timestamps(period):
     tz_mnl = pytz.timezone(TIMEZONE)
-    current_time = datetime.now(tz_mnl)
+    current_time = datetime.now(tz_mnl) - timedelta(minutes = 1)
     start_time = current_time - timedelta(minutes = period)
     timestamps = [(start_time + timedelta(minutes = i)).strftime("%m/%d - %H:%M") for i in range(period + 1)]
 
