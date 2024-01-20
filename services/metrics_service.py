@@ -268,7 +268,7 @@ def generate_trend(result, trend_names, limit):
     
     else:
         counter = 0
-        rawLimit = len(raw)
+        rawLimit = len(raw) - 1
         for timestamp in recorded_timestamps:
             if timestamp == raw[counter][0]:
                 data = raw[counter]
@@ -277,11 +277,11 @@ def generate_trend(result, trend_names, limit):
                 if trend_sets >= 2:
                     trend[1]["data"].append(data[2])
                     trend[2]["data"].append(data[3])
-                if (counter) <= rawLimit :
+                if counter < rawLimit :
                     counter += 1
             else:
                 timestamps.insert(0, timestamp)
-                trend[0]["data"].append(0.00)
+                trend[0]["data"].insert(0, 0.00)
                 if trend_sets >= 2:
                     trend[1]["data"].append(0.00)
                     trend[2]["data"].append(0.00)
