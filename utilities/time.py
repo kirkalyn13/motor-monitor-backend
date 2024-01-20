@@ -1,11 +1,13 @@
 from datetime import datetime, timedelta
 import pytz
 
-timestamp_format = """
+TIMEZONE = 'Asia/Manila'
+
+timestamp_format = f"""
     timestamp
     AT TIME ZONE 'UTC'
     AT TIME ZONE
-    'Asia/Manila' 
+    '{TIMEZONE}' 
     AS ph_timestamp
     """
 
@@ -22,9 +24,9 @@ def get_timestamp_range(period = 15):
     return "'" + start_timestamp_str + "' AND '" + end_timestamp_str + "'"
 
 def generate_timestamps(period):
-    tz_mnl = pytz.timezone('Asia/Manila')
+    tz_mnl = pytz.timezone(TIMEZONE)
     current_time = datetime.now(tz_mnl)
     start_time = current_time - timedelta(minutes = period + 1)
-    timestamps = [(start_time + timedelta(minutes=i)).strftime("%m/%d - %H:%M") for i in range(period + 1)]
+    timestamps = [(start_time + timedelta(minutes = i)).strftime("%m/%d - %H:%M") for i in range(period + 1)]
 
     return timestamps
