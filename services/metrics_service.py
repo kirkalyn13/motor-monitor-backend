@@ -329,6 +329,9 @@ def generate_trend(result, trend_names, limit):
         counter = 0
         raw_limit = len(raw) - 1
         for timestamp in recorded_timestamps:
+            if raw[counter][0] == raw[counter - 1][0]:
+                counter += 1
+                continue
             if timestamp == raw[counter][0]:
                 data = raw[counter]
                 timestamps.append(data[0])
