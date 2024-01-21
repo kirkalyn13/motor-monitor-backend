@@ -291,6 +291,11 @@ def analyze_metrics(result, rated_voltage, rated_current, max_temperature):
             "status": alarms.check_temperature(result[8], max_temperature)
         })
 
+    # Null Readings
+    null_readings = alarms.check_null_readings(result[0], [result[2],result[3],result[4]], [result[5],result[6],result[7]], result[8])
+    if len(null_readings) > 0:
+        alarms_list.extend(null_readings)
+
     return alarms_list
 
 def generate_trend(result, trend_names, limit):
