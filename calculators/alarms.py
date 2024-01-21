@@ -46,3 +46,49 @@ def check_temperature(temperature, threshold):
     else:
         return severity.NORMAL
     
+def check_null_readings(timestamp, voltages, currents, temperature):
+    null_alarms = []
+    if voltages[0] == 0:
+        null_alarms.append({
+            "timestamp": timestamp,
+            "alarm": "No Data for Phase 1 Voltage",
+            "status": severity.NULL
+        })
+    if voltages[1] == 0:
+        null_alarms.append({
+            "timestamp": timestamp,
+            "alarm": "No Data for Phase 2 Voltage",
+            "status": severity.NULL
+        })
+    if voltages[2] == 0:
+        null_alarms.append({
+            "timestamp": timestamp,
+            "alarm": "No Data for Phase 3 Voltage",
+            "status": severity.NULL
+        })
+    if currents[0] == 0:
+        null_alarms.append({
+            "timestamp": timestamp,
+            "alarm": "No Data for Line 1 Current",
+            "status": severity.NULL
+        })
+    if currents[1] == 0:
+        null_alarms.append({
+            "timestamp": timestamp,
+            "alarm": "No Data for Line 2 Current",
+            "status": severity.NULL
+        })
+    if currents[2] == 0:
+        null_alarms.append({
+            "timestamp": timestamp,
+            "alarm": "No Data for Line 3 Current",
+            "status": severity.NULL
+        })
+    if temperature == 0:
+        null_alarms.append({
+            "timestamp": timestamp,
+            "alarm": "No Data for Temperature",
+            "status": severity.NULL
+        })
+
+    return null_alarms
