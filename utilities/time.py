@@ -27,7 +27,7 @@ def generate_timestamps(period):
     tz_mnl = pytz.timezone(TIMEZONE)
     current_time = datetime.now(tz_mnl) - timedelta(minutes = 1)
     start_time = current_time - timedelta(minutes = period)
-    timestamps = [(start_time + timedelta(minutes = i)).strftime("%m/%d - %H:%M") for i in range(period + 1)]
+    timestamps = [(start_time + timedelta(minutes = i)).strftime("%m/%d - %H:%M") for i in range(period + 2)]
 
     return timestamps
 

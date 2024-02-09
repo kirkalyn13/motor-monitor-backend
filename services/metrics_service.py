@@ -369,7 +369,6 @@ def generate_trend(result, trend_names, limit):
                     trend[1]["data"].append(0.00)
                     trend[2]["data"].append(0.00)
  
-    
     return {
         "trend": trend,
         "timestamps": timestamps
