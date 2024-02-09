@@ -31,9 +31,15 @@ def check_short_circuit(current, threshold):
         return severity.CRITICAL
     else:
         return severity.NORMAL
+
+def check_current_overload(current, threshold):
+    if current >= (1.25*threshold) and current < (1.5*threshold):
+        return severity.CRITICAL
+    else:
+        return severity.NORMAL
     
 def check_phase_loss(current, threshold):
-    if current >= (1.25*threshold):
+    if current >= (1.5*threshold):
         return severity.CRITICAL
     else:
         return severity.NORMAL

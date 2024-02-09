@@ -181,6 +181,8 @@ def get_alarms_history(id, rated_voltage, rated_current, max_temperature, limit)
 
 def analyze_metrics(result, rated_voltage, rated_current, max_temperature):
     alarms_list = []
+    phase_loss_alarm = "Overcurrent due to Phase Loss"
+    phase_loss_detected = False
 
     # Over Voltage
     if alarms.check_over_voltage(result[2], rated_voltage) != severity.NORMAL:
@@ -262,26 +264,46 @@ def analyze_metrics(result, rated_voltage, rated_current, max_temperature):
             "status": alarms.check_no_power(result[4], rated_voltage)
         })
 
-    # Phase Loss
-    phase_loss_alarm = "Overcurrent due to Phase Loss"
-    if alarms.check_phase_loss(result[5], rated_current) != severity.NORMAL:
+    # Current Overload and Phase Loss
+    if alarms.check_current_overload(result[5], rated_current) != severity.NORMAL:
+        alarms_list.append({
+            "timestamp": result[0],
+            "alarm": "Line 1 Current Overload",
+            "status": alarms.check_current_overload(result[5], rated_current)
+        })
+    elif alarms.check_phase_loss(result[5], rated_current) != severity.NORMAL:
         alarms_list.append({
             "timestamp": result[0],
             "alarm": phase_loss_alarm,
             "status": alarms.check_phase_loss(result[5], rated_current)
         })
-    elif alarms.check_phase_loss(result[6], rated_current) != severity.NORMAL:
+        phase_loss_detected = True
+    if alarms.check_current_overload(result[6], rated_current) != severity.NORMAL:
+        alarms_list.append({
+            "timestamp": result[0],
+            "alarm": "Line 2 Current Overload",
+            "status": alarms.check_current_overload(result[6], rated_current)
+        })
+    elif alarms.check_phase_loss(result[6], rated_current) != severity.NORMAL and phase_loss_detected != True:
         alarms_list.append({
             "timestamp": result[0],
             "alarm": phase_loss_alarm,
             "status": alarms.check_phase_loss(result[6], rated_current)
         })
-    elif alarms.check_phase_loss(result[7], rated_current) != severity.NORMAL:
+        phase_loss_detected = True
+    if alarms.check_current_overload(result[7], rated_current) != severity.NORMAL:
+        alarms_list.append({
+            "timestamp": result[0],
+            "alarm": "Line 3 Current Overload",
+            "status": alarms.check_current_overload(result[7], rated_current)
+        })
+    elif alarms.check_phase_loss(result[7], rated_current) != severity.NORMAL and phase_loss_detected != True:
         alarms_list.append({
             "timestamp": result[0],
             "alarm": phase_loss_alarm,
             "status": alarms.check_phase_loss(result[7], rated_current)
         })
+        phase_loss_detected = True
 
     # Temperature
     if alarms.check_temperature(result[8], max_temperature) != severity.NORMAL:
