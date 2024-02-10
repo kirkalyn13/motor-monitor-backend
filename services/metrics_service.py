@@ -113,18 +113,21 @@ def get_metrics_logs(id, limit):
     raw = []
     logs = []
 
+    previous_timestamp = ""
     for data in result:
-        raw.insert(0, {
-            "timestamp": data[1],
-            "id": data[2],
-            "line1_voltage": data[3],
-            "line2_voltage": data[4],
-            "line3_voltage": data[5],
-            "line1_current": data[6],
-            "line2_current": data[7],
-            "line3_current": data[8],
-            "temperature": data[9],
-        })
+        if previous_timestamp != convert_timestamp(data[1]):
+            raw.insert(0, {
+                "timestamp": data[1],
+                "id": data[2],
+                "line1_voltage": data[3],
+                "line2_voltage": data[4],
+                "line3_voltage": data[5],
+                "line1_current": data[6],
+                "line2_current": data[7],
+                "line3_current": data[8],
+                "temperature": data[9],
+            })
+            previous_timestamp = convert_timestamp(data[1])
 
     if len(result) == 0:
         for timestamp in timestamps:
@@ -164,7 +167,7 @@ def get_metrics_logs(id, limit):
                 }) 
  
     
-    return sorted(logs, key = lambda x: str(x['timestamp']))
+    return sorted(logs, key = lambda x: str(x['timestamp']))[1:]
 
 def get_alarms_history(id, rated_voltage, rated_current, max_temperature, limit):
     alarms_history = []
@@ -333,12 +336,14 @@ def generate_trend(result, trend_names, limit):
         })
     trend_sets = len(trend)
 
-    
+    previous_timestamp = ""
     for data in result:
-        if trend_sets >= 2:
-            raw.insert(0, [convert_timestamp(data[0]), data[1], data[2], data[3]])
-        else:
-            raw.insert(0, [convert_timestamp(data[0]), data[1]])
+        if previous_timestamp != convert_timestamp(data[0]):
+            if trend_sets >= 2:
+                raw.insert(0, [convert_timestamp(data[0]), data[1], data[2], data[3]])
+            else:
+                raw.insert(0, [convert_timestamp(data[0]), data[1]])
+            previous_timestamp = convert_timestamp(data[0])
 
     if len(result) == 0:
         timestamps.extend(recorded_timestamps)
@@ -353,7 +358,6 @@ def generate_trend(result, trend_names, limit):
         for timestamp in recorded_timestamps:
             if raw[counter][0] == raw[counter - 1][0]:
                 counter += 1
-                continue
             if timestamp == raw[counter][0]:
                 data = raw[counter]
                 timestamps.append(data[0])
@@ -370,7 +374,6 @@ def generate_trend(result, trend_names, limit):
                     trend[1]["data"].append(0.00)
                     trend[2]["data"].append(0.00)
  
-    
     return {
         "trend": trend,
         "timestamps": timestamps
