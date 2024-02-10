@@ -333,12 +333,14 @@ def generate_trend(result, trend_names, limit):
         })
     trend_sets = len(trend)
 
-    
+    previous_timestamp = ""
     for data in result:
-        if trend_sets >= 2:
-            raw.insert(0, [convert_timestamp(data[0]), data[1], data[2], data[3]])
-        else:
-            raw.insert(0, [convert_timestamp(data[0]), data[1]])
+        if previous_timestamp != convert_timestamp(data[0]):
+            if trend_sets >= 2:
+                raw.insert(0, [convert_timestamp(data[0]), data[1], data[2], data[3]])
+            else:
+                raw.insert(0, [convert_timestamp(data[0]), data[1]])
+            previous_timestamp = convert_timestamp(data[0])
 
     if len(result) == 0:
         timestamps.extend(recorded_timestamps)
