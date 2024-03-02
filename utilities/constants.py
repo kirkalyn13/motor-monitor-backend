@@ -35,31 +35,7 @@ NULL_METRICS_SUMMARY = { "summary": [ 0, 0, 0 ] }
 
 NULL_ALARMS_LIST = [
     {
-    "alarm": "No Data for Phase 1 Voltage",
-    "status": severity.NULL
-    },
-    {
-    "alarm": "No Data for Phase 2 Voltage",
-    "status": severity.NULL
-    },
-    {
-    "alarm": "No Data for Phase 3 Voltage",
-    "status": severity.NULL
-    },
-    {
-    "alarm": "No Data for Line 1 Current",
-    "status": severity.NULL
-    },
-    {
-    "alarm": "No Data for Line 2 Current",
-    "status": severity.NULL
-    },
-    {
-    "alarm": "No Data for Line 3 Current",
-    "status": severity.NULL
-    },
-    {
-    "alarm": "No Data for Temperature",
+    "alarm": "Monitoring Device is OFF",
     "status": severity.NULL
     },
 ]
